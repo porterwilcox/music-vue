@@ -2,7 +2,7 @@ let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 
 let schema = new Schema({
-    title: {
+    name: {
         type: String,
         required: true
     },

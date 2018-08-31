@@ -8,7 +8,6 @@ router.get('/', (req, res, next) => {
         })
         .catch(next)
 })
-
 router.post('/', (req, res, next) => {
     Songs.create(req.body)
         .then(song => {
@@ -16,6 +15,12 @@ router.post('/', (req, res, next) => {
         })
         .catch(next)
 })
-
+router.delete('/:id', (req, res, next) => {
+    Songs.findByIdAndRemove(req.params.id)
+        .then(() => res.send({
+            message: 'song deleted'
+        }))
+        .catch(next)
+})
 
 module.exports = router

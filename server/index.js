@@ -12,9 +12,17 @@ server.use(bp.urlencoded({
 }))
 
 let songRoutes = require('./routes/songs')
+let playlistRoutes = require('./routes/playlists')
 
 server.use('/songs', songRoutes)
+server.use('/playlists', playlistRoutes)
 
+server.use('/songs/*', (error, req, res, next) => {
+    res.send(error)
+})
+server.use('*', (req, res, next) => {
+    res.status(404).send('this is not the page you are looking for')
+})
 server.listen(port, () => {
     console.log('server on port', port)
 })
