@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { Store } from 'vuex'
 import Axios from 'axios'
 import Song from './models/song'
 
@@ -63,9 +63,12 @@ export default new Vuex.Store({
           commit('setPlaylist', res.data)
         })
     },
-    modifyPlaylist({dispatch, commit}, obj){
-      console.log(obj.playlistId)
-      musicDB.put(`/playlists/:${obj.playlistId}`, obj)
+    modifyPlaylist({dispatch, commit, state}, obj){
+      if(state.playlist.songs.find(s => s.tempId == obj.song.tempId)){
+        return alert("this song is already in your playlist")
+      }
+      state.playlist.songs.push(obj.song)
+      musicDB.put(`/playlists/${obj.playlistId}`, state.playlist.songs)
           .then(res => console.log(res))
     }
   }

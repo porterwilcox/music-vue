@@ -1,5 +1,7 @@
 let router = require('express').Router()
 let Playlists = require('../models/playlist')
+let mongoose = require('mongoose')
+let ObjectId = mongoose.Types.ObjectId
 
 router.get('/', (req, res, next) => {
     Playlists.find({})
@@ -24,10 +26,10 @@ router.delete('/:id', (req, res, next) => {
         .catch(next)
 })
 router.put('/:id', (req, res, next) => {
-    Playlists.findById(req.params.id)
-        .then(song => {
-            song.data.push()
-        })
+    Playlists.findByIdAndUpdate(req.params.id, req.body)
+        .then(() => res.send({
+            message: "song added"
+        }))
         .catch(next)
 })
 

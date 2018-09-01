@@ -26,6 +26,10 @@ let schema = new Schema({
         type: Number,
         required: true
     },
+    tempId: {
+        type: Number,
+        required: true
+    }
 })
 
 module.exports = mongoose.model('Song', schema)

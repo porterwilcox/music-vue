@@ -14,11 +14,12 @@
         <img :src="song.albumArt" />
         <h2>{{song.artist}}</h2>
         <h2>{{song.album}}</h2>
-        <audio :src="song.audioPreview" controls></audio>
+        <audio :src="song.audioPreview" controls @play.prevent="test($event)"></audio>
         <button v-if="playlist.songs" @click="addToPlaylist(song, playlist._id)">add to playlist</button>
         <button v-else @click="addToPlaylist(song)">add to playlist</button>
         </div>
       </div>
+      <div class="playlist">
         <div v-if="playlist.songs"
         v-for="s in playlist.songs"
         :key="s.id"
@@ -30,6 +31,7 @@
         <h2>{{s.album}}</h2>
         <audio :src="s.audioPreview" controls></audio>
         </div>
+      </div>
     </div>
   </div>
 </template>
@@ -65,6 +67,8 @@ export default {
         playlistId
       }
       this.$store.dispatch('addToPlaylist', obj)
+    },
+    test(event){
     }
   }
 }
@@ -75,6 +79,10 @@ export default {
   display: flex;
 }
 .search-results{
+  display: flex;
+  flex-flow: wrap column;
+}
+.playlist {
   display: flex;
   flex-flow: wrap column;
 }
