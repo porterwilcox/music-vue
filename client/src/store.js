@@ -16,28 +16,57 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    songs: undefined
+    songs: [],
+    playlist: {}
   },
   mutations: {
-    setSongs(state, songs){
+    setSongs(state, songs) {
       state.songs = songs
+    },
+    setPlaylist(state, playlist) {
+      state.playlist = playlist
     }
   },
   actions: {
-    getSongs({dispatch, commit}){
+    getSongs({ dispatch, commit }) {
       musicDB.get('/songs')
         .then(res => {
-          console.log(res)
           commit('setSongs', res.data)
         })
     },
-    search({dispatch, commit}, artist) {
+    search({ dispatch, commit }, artist) {
       itunesApi.get(`/${artist}`)
         .then(res => {
           let musicArr = res.data.results.map(s => new Song(s))
-          console.log(musicArr)
-          commit('setSongs', musicArr)          
+          commit('setSongs', musicArr)
         })
+    },
+    addToPlaylist({ dispatch, commit }, obj) {
+      musicDB.post("/songs", obj.song)
+        .then(res => {
+          if (!obj.playlistId) {
+            dispatch('newPlaylist', res)
+          }
+          else {
+            dispatch('modifyPlaylist', {
+              song: res.data,
+              playlistId: obj.playlistId
+            })
+          }
+        })
+    },
+    newPlaylist({ dispatch, commit }, promise) {
+      let playlistArr = []
+      playlistArr.push(promise.data)
+      musicDB.post('/playlists', { songs: playlistArr })
+        .then(res => {
+          commit('setPlaylist', res.data)
+        })
+    },
+    modifyPlaylist({dispatch, commit}, obj){
+      console.log(obj.playlistId)
+      musicDB.put(`/playlists/:${obj.playlistId}`, obj)
+          .then(res => console.log(res))
     }
   }
 })

@@ -16,6 +16,20 @@ router.post('/', (req, res, next) => {
         })
         .catch(next)
 })
+router.delete('/:id', (req, res, next) => {
+    Playlists.findByIdAndRemove(req.params.id)
+        .then(() => res.send({
+            message: 'playlist deleted'
+        }))
+        .catch(next)
+})
+router.put('/:id', (req, res, next) => {
+    Playlists.findById(req.params.id)
+        .then(song => {
+            song.data.push()
+        })
+        .catch(next)
+})
 
 
 module.exports = router
