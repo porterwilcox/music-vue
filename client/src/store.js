@@ -69,7 +69,18 @@ export default new Vuex.Store({
       }
       state.playlist.songs.push(obj.song)
       musicDB.put(`/playlists/${obj.playlistId}`, state.playlist.songs)
-          .then(res => console.log(res))
+    },
+    removeFromPlaylist({dispatch, commit, state}, obj){
+      state.playlist.songs.splice(obj.index, 1)
+      musicDB.put(`/playlists/modify/${obj.playlistId}`, state.playlist.songs)
+    },
+    modifyVote({dispatch, commit, state}, obj){
+      state.playlist.songs.splice(obj.index, 1)
+      state.playlist.songs.push(obj.song)
+      state.playlist.songs.sort((a, b) => {
+        return b.vote - a.vote
+      })
+      musicDB.put(`/playlists/${obj.playlistId}`, state.playlist.songs)
     }
   }
 })

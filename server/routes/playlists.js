@@ -28,10 +28,16 @@ router.delete('/:id', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
     Playlists.findByIdAndUpdate(req.params.id, req.body)
         .then(() => res.send({
-            message: "song added"
+            message: "playlist updated"
         }))
         .catch(next)
 })
-
+router.put('/modify/:id', (req, res, next) => {
+    Playlists.findByIdAndUpdate(req.params.id, req.body)
+        .then(() => res.send({
+            message: "song removed"
+        }))
+        .catch(next)
+})
 
 module.exports = router
