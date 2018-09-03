@@ -11,9 +11,11 @@ server.use(bp.urlencoded({
     extended: true
 }))
 
+let userRoutes = require('./routes/users')
 let songRoutes = require('./routes/songs')
 let playlistRoutes = require('./routes/playlists')
 
+server.use('/users', userRoutes)
 server.use('/songs', songRoutes)
 server.use('/playlists', playlistRoutes)
 
