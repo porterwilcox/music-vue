@@ -17,7 +17,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     songs: [],
-    playlist: {}
+    playlist: {},
+    user: {}
   },
   mutations: {
     setSongs(state, songs) {
@@ -25,15 +26,16 @@ export default new Vuex.Store({
     },
     setPlaylist(state, playlist) {
       state.playlist = playlist
+    },
+    register(state, user){
+      state.user = user
+    },
+    login(state, user){
+      state.user = user[0]
     }
   },
   actions: {
-    getSongs({ dispatch, commit }) {
-      musicDB.get('/songs')
-        .then(res => {
-          commit('setSongs', res.data)
-        })
-    },
+    //ITUNES
     search({ dispatch, commit }, artist) {
       itunesApi.get(`/${artist}`)
         .then(res => {
@@ -41,6 +43,14 @@ export default new Vuex.Store({
           commit('setSongs', musicArr)
         })
     },
+    //SONGS
+    getSongs({ dispatch, commit }) {
+      musicDB.get('/songs')
+        .then(res => {
+          commit('setSongs', res.data)
+        })
+    },
+    //PLAYLISTS
     addToPlaylist({ dispatch, commit }, obj) {
       musicDB.post("/songs", obj.song)
         .then(res => {
@@ -81,6 +91,30 @@ export default new Vuex.Store({
         return b.vote - a.vote
       })
       musicDB.put(`/playlists/${obj.playlistId}`, state.playlist.songs)
+    },
+    //USERS
+    userExists({}, name){
+      musicDB.get(`/users/exists/${name}`)
+        .then(res => {
+          if(res.data.length){
+            return alert('USERNAME TAKEN:\ncreate a different username please')
+          }
+        })
+    },
+    register({dispatch, commit}, obj){
+      musicDB.post('/users', obj)
+        .then(res => {
+          commit('register', res.data)
+        })
+    },
+    login({dispatch, commit}, obj){
+      musicDB.get(`/users/${obj.username}/${obj.password}`)
+        .then(res => {
+          if(res.data.length){
+            return commit('login', res.data)
+          }
+          return alert("username or password incorrect")
+        })
     }
   }
 })

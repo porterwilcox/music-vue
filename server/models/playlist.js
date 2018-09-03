@@ -1,5 +1,6 @@
 let mongoose = require('mongoose')
 let Schema = mongoose.Schema
+let ObjectId = Schema.Types.ObjectId
 
 let schema = new Schema({
     name: {
@@ -8,6 +9,11 @@ let schema = new Schema({
     },
     songs: {
         type: Array,
+        required: true
+    },
+    userId: {
+        type: ObjectId,
+        ref: 'User',
         required: true
     }
 })

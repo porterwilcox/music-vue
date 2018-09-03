@@ -1,6 +1,7 @@
 <template>
 <div class="home">
   <img alt="Vue logo" src="../assets/logo.png">
+  <user />
   <div class="musics">
     <search />
     <playlist />
@@ -11,20 +12,14 @@
 <script>
 import Search from "@/components/search";
 import Playlist from "@/components/playlist";
+import User from "@/components/user";
 
 export default {
   name: "home",
-  computed: {
-    songs() {
-      return this.$store.state.songs;
-    },
-    playlist() {
-      return this.$store.state.playlist;
-    }
-  },
   components: {
     Search,
-    Playlist
+    Playlist,
+    User
   },
 };
 </script>

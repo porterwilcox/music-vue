@@ -2,7 +2,7 @@ let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 
 let schema = new Schema({
-    name: {
+    username: {
         type: String,
         required: true,
         unique: true
