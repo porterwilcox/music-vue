@@ -1,6 +1,6 @@
 <template>
-<div class="playlist">
-    <div v-if="playlist.songs"
+<div class="playlist" v-if="playlist._id">
+    <div
     v-for="(song, index) in playlist.songs"
     :key="song.id"
     >

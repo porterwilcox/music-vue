@@ -3,8 +3,8 @@ let Playlists = require('../models/playlist')
 let mongoose = require('mongoose')
 let ObjectId = mongoose.Types.ObjectId
 
-router.get('/', (req, res, next) => {
-    Playlists.find({})
+router.get('/:id', (req, res, next) => {
+    Playlists.find({userId: req.params.id})
         .then(playlist => {
             return res.send(playlist)
         })

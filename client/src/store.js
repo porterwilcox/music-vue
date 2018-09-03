@@ -27,10 +27,10 @@ export default new Vuex.Store({
     setPlaylist(state, playlist) {
       state.playlist = playlist
     },
-    register(state, user){
+    register(state, user) {
       state.user = user
     },
-    login(state, user){
+    login(state, user) {
       state.user = user[0]
     }
   },
@@ -52,66 +52,70 @@ export default new Vuex.Store({
     },
     //PLAYLISTS
     addToPlaylist({ dispatch, commit }, obj) {
-      musicDB.post("/songs", obj.song)
-        .then(res => {
-          if (!obj.playlistId) {
-            dispatch('newPlaylist', res)
-          }
-          else {
-            dispatch('modifyPlaylist', {
-              song: res.data,
-              playlistId: obj.playlistId
-            })
-          }
-        })
+      if (!obj.userId) {
+        return alert("REGISTER OR SIGN IN\nto save songs to a playlist")
+      }
+      if (!obj.playlistId){
+        return dispatch('newPlaylist', obj)
+      }
+      dispatch('modifyPlaylist', obj)
     },
-    newPlaylist({ dispatch, commit }, promise) {
+    newPlaylist({ dispatch, commit }, obj) {
       let playlistArr = []
-      playlistArr.push(promise.data)
-      musicDB.post('/playlists', { songs: playlistArr })
+      playlistArr.push(obj.song)
+      musicDB.post('/playlists', { songs: playlistArr, userId: obj.userId })
         .then(res => {
           commit('setPlaylist', res.data)
         })
     },
-    modifyPlaylist({dispatch, commit, state}, obj){
-      if(state.playlist.songs.find(s => s.tempId == obj.song.tempId)){
+    modifyPlaylist({ dispatch, commit, state }, obj) {
+      if (state.playlist.songs.find(s => s.tempId == obj.song.tempId)) {
         return alert("this song is already in your playlist")
       }
       state.playlist.songs.push(obj.song)
-      musicDB.put(`/playlists/${obj.playlistId}`, state.playlist.songs)
+      musicDB.put(`/playlists/${obj.playlistId}`, {songs: state.playlist.songs})
     },
-    removeFromPlaylist({dispatch, commit, state}, obj){
+    removeFromPlaylist({ dispatch, commit, state }, obj) {
       state.playlist.songs.splice(obj.index, 1)
-      musicDB.put(`/playlists/modify/${obj.playlistId}`, state.playlist.songs)
+      musicDB.put(`/playlists/modify/${obj.playlistId}`, {songs: state.playlist.songs})
     },
-    modifyVote({dispatch, commit, state}, obj){
+    modifyVote({ dispatch, commit, state }, obj) {
       state.playlist.songs.splice(obj.index, 1)
       state.playlist.songs.push(obj.song)
       state.playlist.songs.sort((a, b) => {
         return b.vote - a.vote
       })
-      musicDB.put(`/playlists/${obj.playlistId}`, state.playlist.songs)
+      musicDB.put(`/playlists/${obj.playlistId}`, {songs: state.playlist.songs})
     },
     //USERS
-    userExists({}, name){
+    userExists({ }, name) {
       musicDB.get(`/users/exists/${name}`)
         .then(res => {
-          if(res.data.length){
+          if (res.data.length) {
             return alert('USERNAME TAKEN:\ncreate a different username please')
           }
         })
     },
-    register({dispatch, commit}, obj){
+    register({ dispatch, commit }, obj) {
       musicDB.post('/users', obj)
         .then(res => {
           commit('register', res.data)
         })
     },
-    login({dispatch, commit}, obj){
+    login({ dispatch, commit }, obj) {
+      let userId = ''
       musicDB.get(`/users/${obj.username}/${obj.password}`)
         .then(res => {
-          if(res.data.length){
-            return commit('login', res.data)
+          if (res.data.length) {
+            userId = res.data[0]._id
+            commit('login', res.data)
+            musicDB.get(`/playlists/${userId}`)
+              .then(res => {
+                if(res.data.length){
+                commit('setPlaylist', res.data[0])
+                }
+              })
+            return
           }
           return alert("username or password incorrect")
         })

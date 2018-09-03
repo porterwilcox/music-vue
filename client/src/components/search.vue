@@ -13,8 +13,7 @@
             <h2>{{song.artist}}</h2>
             <h2>{{song.album}}</h2>
             <audio :src="song.audioPreview" controls v-on:play="playPreview($event)"></audio>
-            <button v-if="playlist.songs" @click="addToPlaylist(song, playlist._id)">add to playlist</button>
-            <button v-else @click="addToPlaylist(song)">add to playlist</button>
+            <button @click="addToPlaylist(song, user._id, playlist._id)">add to playlist</button>
         </div>
     </div>
 </div>
@@ -34,15 +33,19 @@ export default {
     },
     playlist() {
       return this.$store.state.playlist;
+    },
+    user(){
+      return this.$store.state.user
     }
   },
   methods: {
     search(event) {
       this.$store.dispatch("search", this.artist);
     },
-    addToPlaylist(song, playlistId) {
+    addToPlaylist(song, userId, playlistId) {
       let obj = {
         song,
+        userId,
         playlistId
       };
       this.$store.dispatch("addToPlaylist", obj);
