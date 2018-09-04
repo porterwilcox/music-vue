@@ -71,6 +71,7 @@ export default {
       }
       this.$store.dispatch('playlistTitleChange', obj)
       this.title = true
+      this.newTitle = ''
     }
   }
 };
