@@ -20,7 +20,8 @@
             </div>
         </div>
         <div v-else>
-            {{user}}
+            <h1>{{user.username}}</h1>
+            <button @click="logout">logout</button>
         </div>
     </div>
 </template>
@@ -55,10 +56,13 @@ export default {
       this.$store.dispatch("register", {
         username: this.username,
         password: this.password
-      });
+      })
     },
     userExists(name) {
       this.$store.dispatch("userExists", name);
+    },
+    logout(){
+      this.$store.commit('logout', {})
     }
   }
 };

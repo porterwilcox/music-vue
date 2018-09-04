@@ -32,6 +32,9 @@ export default new Vuex.Store({
     },
     login(state, user) {
       state.user = user[0]
+    },
+    logout(state, logout){
+      state.user = logout
     }
   },
   actions: {

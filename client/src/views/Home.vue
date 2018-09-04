@@ -1,6 +1,5 @@
 <template>
 <div class="home">
-  <img alt="Vue logo" src="../assets/logo.png">
   <user />
   <div class="musics">
     <search />
@@ -20,7 +19,7 @@ export default {
     Search,
     Playlist,
     User
-  },
+  }
 };
 </script>
 
