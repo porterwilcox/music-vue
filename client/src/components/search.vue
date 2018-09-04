@@ -109,11 +109,13 @@ form input {
   overflow-y: scroll;
   overflow-x: hidden;
   justify-content: flex-end;
+  cursor: pointer;
 }
 .search-content-modal {
   width: 45vw;
   height: fit-content;
   background-color: #a4b3b6;
+  cursor: default;
 }
 .search-content-modal div {
   display: flex;

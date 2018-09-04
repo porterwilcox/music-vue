@@ -1,6 +1,9 @@
 <template>
 <div class="playlist" v-if="playlist._id">
-    <h2>{{playlist.name}}</h2>
+    <h2 class="title" v-if="title">{{playlist.name}}<button @click="showForm">&#x2699;</button></h2>
+    <form class="title" v-else @submit.prevent="titleChange(playlist._id, playlist.userId)">
+      <input v-model="newTitle" type="text" placeholder="new playlist name here" />
+    </form>
     <div
     v-for="(song, index) in playlist.songs"
     :key="song.id"
@@ -23,6 +26,12 @@
 <script>
 export default {
   name: "playlist",
+  data(){
+    return {
+      title: true,
+      newTitle: ''
+    }
+  },
   computed: {
     playlist() {
       return this.$store.state.playlist;
@@ -50,6 +59,18 @@ export default {
     },
     modifyVote(obj) {
       this.$store.dispatch("modifyVote", obj);
+    },
+    showForm(){
+      this.title= false
+    },
+    titleChange(playlistId, userId){
+      let obj = {
+        playlistId,
+        userId,
+        newTitle: this.newTitle
+      }
+      this.$store.dispatch('playlistTitleChange', obj)
+      this.title = true
     }
   }
 };
@@ -63,6 +84,18 @@ export default {
 .vote {
   font-size: 2rem;
   margin: 0 .5rem;
+}
+.title {
+  padding: 3vh 0 1vh;
+  border-bottom: 2px solid black;
+}
+.playlist div {
+  margin: 5vh 0 0;
+}
+h2 button {
+  margin-left: 3rem;
+  background-color: transparent;
+  font-size: 1.2rem;
 }
 </style>
 

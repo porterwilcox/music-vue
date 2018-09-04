@@ -33,7 +33,7 @@ export default new Vuex.Store({
     login(state, user) {
       state.user = user[0]
     },
-    logout(state, logout){
+    logout(state, logout) {
       state.user = logout
     }
   },
@@ -58,7 +58,7 @@ export default new Vuex.Store({
       if (!obj.userId) {
         return alert("REGISTER OR SIGN IN\nto save songs to a playlist")
       }
-      if (!obj.playlistId){
+      if (!obj.playlistId) {
         return dispatch('newPlaylist', obj)
       }
       dispatch('modifyPlaylist', obj)
@@ -76,11 +76,11 @@ export default new Vuex.Store({
         return alert("this song is already in your playlist")
       }
       state.playlist.songs.push(obj.song)
-      musicDB.put(`/playlists/${obj.playlistId}`, {songs: state.playlist.songs})
+      musicDB.put(`/playlists/${obj.playlistId}`, { songs: state.playlist.songs })
     },
     removeFromPlaylist({ dispatch, commit, state }, obj) {
       state.playlist.songs.splice(obj.index, 1)
-      musicDB.put(`/playlists/modify/${obj.playlistId}`, {songs: state.playlist.songs})
+      musicDB.put(`/playlists/modify/${obj.playlistId}`, { songs: state.playlist.songs })
     },
     modifyVote({ dispatch, commit, state }, obj) {
       state.playlist.songs.splice(obj.index, 1)
@@ -88,11 +88,20 @@ export default new Vuex.Store({
       state.playlist.songs.sort((a, b) => {
         return b.vote - a.vote
       })
-      musicDB.put(`/playlists/${obj.playlistId}`, {songs: state.playlist.songs})
+      musicDB.put(`/playlists/${obj.playlistId}`, { songs: state.playlist.songs })
     },
+    playlistTitleChange({dispatch, commit}, obj){
+      musicDB.put(`/playlists/${obj.playlistId}`, {name: obj.newTitle})
+        .then(() =>{
+          musicDB.get(`/playlists/${obj.userId}`)
+            .then(res => {
+              console.log(res.data)
+              commit('setPlaylist', res.data[0])
+            })
+        })
+    },    
     //USERS
     userExists({ }, name) {
-      console.log(name)
       musicDB.get(`/users/exists/now/${name}`)
         .then(res => {
           if (res.data.length) {
@@ -115,8 +124,8 @@ export default new Vuex.Store({
             commit('login', res.data)
             musicDB.get(`/playlists/${userId}`)
               .then(res => {
-                if(res.data.length){
-                commit('setPlaylist', res.data[0])
+                if (res.data.length) {
+                  commit('setPlaylist', res.data[0])
                 }
               })
             return

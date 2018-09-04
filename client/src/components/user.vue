@@ -46,10 +46,12 @@ export default {
   },
   methods: {
     login(event) {
-        this.$store.dispatch('login', {
-            username: this.username,
-            password: this.password
-        })
+      this.$store.dispatch("login", {
+        username: this.username,
+        password: this.password
+      });
+      this.username = "";
+      this.password = "";
     },
     register(event) {
       if (this.password !== this.passwordConfirm) {
@@ -58,14 +60,17 @@ export default {
       this.$store.dispatch("register", {
         username: this.username,
         password: this.password
-      })
+      });
+      this.username = "";
+      this.password = "";
+      this.passwordConfirm = "";
     },
     userExists(name) {
       this.$store.dispatch("userExists", name);
     },
-    logout(){
-      this.$store.commit('logout', {})
-      this.$store.commit('setPlaylist', {})
+    logout() {
+      this.$store.commit("logout", {});
+      this.$store.commit("setPlaylist", {});
     }
   }
 };
@@ -81,7 +86,8 @@ export default {
 h1 {
   position: fixed;
 }
-.login, .register {
+.login,
+.register {
   display: flex;
 }
 .login form button {
