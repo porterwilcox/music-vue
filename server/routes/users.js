@@ -6,6 +6,11 @@ router.get('/:name/:password', (req, res, next) => {
         .then(user => res.send(user))
         .catch(next)
 })
+router.get('/exists/now/:name', (req, res, next) => {
+    Users.find({username: req.params.name})
+        .then(user => res.send(user))
+        .catch(next)
+})
 router.post('/', (req, res, next) => {
     Users.create(req.body)
         .then(user => res.send(user))
@@ -16,11 +21,6 @@ router.delete('/:id', (req, res, next) => {
         .then(() => res.send({
             message: 'user deleted'
         }))
-})
-router.get('/exists/:name', (req, res, next) => {
-    Users.find({username: req.params.name})
-        .then(user => res.send(user))
-        .catch(next)
 })
 
 module.exports = router

@@ -92,7 +92,8 @@ export default new Vuex.Store({
     },
     //USERS
     userExists({ }, name) {
-      musicDB.get(`/users/exists/${name}`)
+      console.log(name)
+      musicDB.get(`/users/exists/now/${name}`)
         .then(res => {
           if (res.data.length) {
             return alert('USERNAME TAKEN:\ncreate a different username please')
