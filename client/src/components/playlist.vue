@@ -1,6 +1,6 @@
 <template>
 <div class="playlist" v-if="playlist._id">
-    <h2 class="title" v-if="title">{{playlist.name}}<button @click="showForm">&#x2699;</button></h2>
+    <h2 class="title" v-if="title" @click="showForm">{{playlist.name}}</h2>
     <form v-else @submit.prevent="titleChange(playlist._id, playlist.userId)">
       <input class="title" v-model="newTitle" type="text" placeholder="new playlist name here" />
     </form>
@@ -84,6 +84,9 @@ export default {
 .vote {
   font-size: 2rem;
   margin: 0 .5rem;
+}
+.playlist h2:first-child {
+  cursor: pointer;
 }
 .title {
   padding: 3vh 0 1vh;
