@@ -5,16 +5,23 @@
 </template>
 
 <style>
-:root{
---dark-purple: #2a1b3d;
---purple: #44318d;
---light-purple: #8265a7;
---grey: #a4b3b6;
---pink: #d83f87;
-}
 body {
-  height: 100vh;
-  background: linear-gradient(180deg, var(--dark-purple), var(--purple), var(--light-purple));
-  overflow: hidden; 
+  background-image: url("./assets/stereo.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  overflow-x: hidden;
+}
+input {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+button {
+  cursor: pointer;
+}
+span {
+  margin: 0 .25rem 0 1rem
 }
 </style>

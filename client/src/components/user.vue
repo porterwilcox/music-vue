@@ -1,27 +1,29 @@
 <template>
     <div class="user">
         <div v-if="!user._id">
-            <div v-if="hasAccount">
+            <div v-if="hasAccount" class="login">
                 <form @submit.prevent="login">
                     <input type="text" placeholder="username" v-model="username" autofocus/>
                     <input type="password" placeholder="password" v-model="password" />
                     <button type="submit">login</button>
                 </form>
+                    <span>or</span>
                     <button @click="hasAccount=false">register</button>
             </div>
-            <div v-else>
+            <div v-else class="register">
                 <form @submit.prevent="register">
                     <input type="text" placeholder="username" v-model="username" @focusout="userExists(username)" />
                     <input type="password" placeholder="password" v-model="password" />
                     <input type="password" placeholder="confirm password" v-model="passwordConfirm" />
                     <button type="submit">register</button>
                 </form>
+                    <span>or</span>
                     <button @click="hasAccount=true">login</button>
             </div>
         </div>
         <div v-else>
             <h1>{{user.username}}</h1>
-            <button @click="logout">logout</button>
+            <button class="logout" @click="logout">logout</button>
         </div>
     </div>
 </template>
@@ -63,10 +65,29 @@ export default {
     },
     logout(){
       this.$store.commit('logout', {})
+      this.$store.commit('setPlaylist', {})
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
+.logout {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  right: 0;
+}
+h1 {
+  position: fixed;
+}
+.login, .register {
+  display: flex;
+}
+.login form button {
+  background-color: #5cb85c;
+}
+.register form button {
+  background-color: #428bca;
+}
 </style>

@@ -1,19 +1,21 @@
 <template>
 <div class="playlist" v-if="playlist._id">
+    <h2>{{playlist.name}}</h2>
     <div
     v-for="(song, index) in playlist.songs"
     :key="song.id"
     >
-        <h2>{{playlist.name}}</h2>
         <h1>{{song.name}}</h1>
+        <button style="transform: rotateX(180deg)" @click="song.vote++, modifyVote({song, index, playlistId: playlist._id})">&#x26DB;</button>
+        <span class="vote">{{song.vote}}</span>
+        <button @click="song.vote--, modifyVote({song, index, playlistId: playlist._id})">&#x26DB;</button>
+        <br>
         <img :src="song.albumArt" />
         <h2>{{song.artist}}</h2>
         <h2>{{song.album}}</h2>
         <audio :src="song.audioPreview" controls v-on:play="playPreview($event)"></audio>
-        <button style="transform: rotateX(180deg)" @click="song.vote++, modifyVote({song, index, playlistId: playlist._id})">&#x26DB;</button>
-        <span>{{song.vote}}</span>
-        <button @click="song.vote--, modifyVote({song, index, playlistId: playlist._id})">&#x26DB;</button>
         <button v-if="playlist.songs" @click="removeFromPlaylist(index, playlist._id)">remove from playlist</button>
+        <hr>
     </div>
 </div>
 </template>
@@ -54,5 +56,13 @@ export default {
 </script>
 
 <style>
+.playlist {
+  position: absolute;
+  right: 5vw;
+}
+.vote {
+  font-size: 2rem;
+  margin: 0 .5rem;
+}
 </style>
 
