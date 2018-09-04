@@ -20,6 +20,7 @@ router.delete('/:id', (req, res, next) => {
 router.get('/exists/:name', (req, res, next) => {
     Users.find({username: req.params.name})
         .then(user => res.send(user))
+        .catch(next)
 })
 
 module.exports = router
