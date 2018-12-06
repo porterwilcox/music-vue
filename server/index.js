@@ -5,23 +5,30 @@ require('./db/db-config')
 let port = 3000
 let server = express()
 
-server.use(cors())
 server.use(bp.json())
 server.use(bp.urlencoded({
     extended: true
 }))
 
-let userRoutes = require('./routes/users')
-let songRoutes = require('./routes/songs')
-let playlistRoutes = require('./routes/playlists')
+let whitelist = ['http://localhost:8080']
+let corsOptions = {
+    origin: function (origin, callback) {
+        let originIsWhitelisted = whitelist.indexOf(origin) !== -1
+        callback(null, originIsWhitelisted)
+    },
+    credentials: true
+}
+server.use(cors(corsOptions))
 
-server.use('/users', userRoutes)
-server.use('/songs', songRoutes)
-server.use('/playlists', playlistRoutes)
+let auth = require('./auth/routes')
+server.use(auth.session)
+server.use('/auth', auth.router)
 
-server.use('/songs/*', (error, req, res, next) => {
-    res.send(error)
-})
+let songsRoutes = require('./routes/songs')
+server.use('/songs', songsRoutes)
+
+
+
 server.use('*', (req, res, next) => {
     res.status(404).send('this is not the page you are looking for')
 })

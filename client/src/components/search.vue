@@ -5,16 +5,13 @@
     </form>
     <div class="search-results-modal" v-if="songs" @click="closeModal($event)">
       <div class="search-content-modal">
-          <div
-          v-for="song in songs"
-          :key="song.tempId"
-          >
+          <div v-for="song in songs" :key="song.tempId">
               <h1>{{song.name}}</h1>
               <img :src="song.albumArt" />
               <h2>{{song.artist}}</h2>
               <h2>{{song.album}}</h2>
               <audio :src="song.audioPreview" controls v-on:play="playPreview($event)"></audio>
-              <button @click="addToPlaylist(song, user._id, playlist._id)">add to playlist</button>
+              <button @click="modifyPlaylist(song)">add to playlist</button>
           </div>
       </div>
     </div>
@@ -31,39 +28,29 @@ export default {
   },
   computed: {
     songs() {
-      return this.$store.state.songs;
-    },
-    playlist() {
-      return this.$store.state.playlist;
+      return this.$store.state.itunesSongs;
     },
     user() {
       return this.$store.state.user;
     }
   },
   methods: {
+    modifyPlaylist(song) {
+      if (!this.user._id) {
+        return alert("REGISTER OR SIGN IN\nto save songs to a playlist")
+      }
+      // debugger
+      // if(this.songs.find(s => s.itunesId == song.itunesId)) {
+      //   return alert("This song is already in your playlist")
+      // }
+      this.$store.dispatch('addSong', song)
+    },
     search(event) {
       this.$store.dispatch("search", this.artist);
       document.querySelector(".search-results-modal").style.display = "flex";
     },
-    addToPlaylist(song, userId, playlistId) {
-      let obj = {
-        song,
-        userId,
-        playlistId
-      };
-      this.$store.dispatch("addToPlaylist", obj);
-    },
-    playPreview(event) {
-      // used the same function i made for music-is-fun project
-      let previews = document.getElementsByTagName("audio");
-      for (let i = 0; i < previews.length; i++) {
-        const soundBite = previews[i];
-        if (soundBite == event.target) {
-          soundBite.play();
-        } else {
-          soundBite.pause();
-        }
-      }
+    playPreview(e) {
+      Array.from(document.getElementsByTagName("audio")).forEach(a => a == e.target ? a.play() : a.pause())
     },
     placeholderChange() {
       document

@@ -1,23 +1,21 @@
 <template>
-<div class="playlist" v-if="playlist._id">
-    <h2 class="title" v-if="title" @click="showForm">{{playlist.name}}</h2>
-    <form v-else @submit.prevent="titleChange(playlist._id, playlist.userId)">
-      <input class="title" v-model="newTitle" type="text" placeholder="new playlist name here" />
-    </form>
-    <div
-    v-for="(song, index) in playlist.songs"
-    :key="song.id"
-    >
-        <h1>{{song.name}}</h1>
-        <button style="transform: rotateX(180deg)" @click="song.vote++, modifyVote({song, index, playlistId: playlist._id})">&#x26DB;</button>
-        <span class="vote">{{song.vote}}</span>
-        <button @click="song.vote--, modifyVote({song, index, playlistId: playlist._id})">&#x26DB;</button>
+<div class="playlist" v-if="songs.length">
+    <h2 class="title">Your playlist</h2>
+    <div v-for="(song, index) in songs" :key="song._id">
+        <div class="d-flex">
+          <h1 class="m-0">{{song.name}}</h1>
+          <div>
+            <button style="transform: rotateX(180deg)" @click="song.vote++">&#x26DB;</button>
+            <span class="vote">{{song.vote}}</span>
+            <button @click="song.vote--">&#x26DB;</button>
+          </div>
+        </div>
         <br>
         <img :src="song.albumArt" />
         <h2>{{song.artist}}</h2>
         <h2>{{song.album}}</h2>
         <audio :src="song.audioPreview" controls v-on:play="playPreview($event)"></audio>
-        <button v-if="playlist.songs" @click="removeFromPlaylist(index, playlist._id)">remove from playlist</button>
+        <button class="btn-outline-danger" @click="removeFromPlaylist(index, playlist._id)">remove from playlist</button>
         <hr>
     </div>
 </div>
@@ -33,45 +31,17 @@ export default {
     }
   },
   computed: {
-    playlist() {
-      return this.$store.state.playlist;
+    songs() {
+      return this.$store.state.songs;
     }
   },
   methods: {
-    removeFromPlaylist(index, playlistId) {
-      let obj = {
-        index,
-        playlistId
-      };
-      this.$store.dispatch("removeFromPlaylist", obj);
-    },
-    playPreview(event) {
-      // used the same function i made for music-is-fun project
-      let previews = document.getElementsByTagName("audio");
-      for (let i = 0; i < previews.length; i++) {
-        const soundBite = previews[i];
-        if (soundBite == event.target) {
-          soundBite.play();
-        } else {
-          soundBite.pause();
-        }
-      }
+    //removeFromPlaylist
+    playPreview(e) {
+      Array.from(document.getElementsByTagName("audio")).forEach(a => a == e.target ? a.play() : a.pause())
     },
     modifyVote(obj) {
       this.$store.dispatch("modifyVote", obj);
-    },
-    showForm(){
-      this.title= false
-    },
-    titleChange(playlistId, userId){
-      let obj = {
-        playlistId,
-        userId,
-        newTitle: this.newTitle
-      }
-      this.$store.dispatch('playlistTitleChange', obj)
-      this.title = true
-      this.newTitle = ''
     }
   }
 };

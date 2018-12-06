@@ -1,6 +1,6 @@
 <template>
 <div class="home">
-  <user />
+  <auth />
   <div class="musics">
     <search />
     <playlist />
@@ -11,14 +11,14 @@
 <script>
 import Search from "@/components/search";
 import Playlist from "@/components/playlist";
-import User from "@/components/user";
+import Auth from "@/components/auth";
 
 export default {
   name: "home",
   components: {
     Search,
     Playlist,
-    User
+    Auth
   }
 };
 </script>
