@@ -1,13 +1,13 @@
 <template>
 <div class="playlist" v-if="songs.length">
     <h2 class="title">Your playlist</h2>
-    <div v-for="(song, index) in songs" :key="song._id">
+    <div v-for="(song, i) in songs" :key="song._id">
         <div class="d-flex">
           <h1 class="m-0">{{song.name}}</h1>
           <div>
-            <button style="transform: rotateX(180deg)" @click="song.vote++">&#x26DB;</button>
+            <button style="transform: rotateX(180deg)" @click="song.vote++; updateSong(song, i) ">&#x26DB;</button>
             <span class="vote">{{song.vote}}</span>
-            <button @click="song.vote--">&#x26DB;</button>
+            <button @click="song.vote--; updateSong(song, i)">&#x26DB;</button>
           </div>
         </div>
         <br>
@@ -15,7 +15,7 @@
         <h2>{{song.artist}}</h2>
         <h2>{{song.album}}</h2>
         <audio :src="song.audioPreview" controls v-on:play="playPreview($event)"></audio>
-        <button class="btn-outline-danger" @click="removeFromPlaylist(index, playlist._id)">remove from playlist</button>
+        <button class="btn-outline-danger" @click="removeFromPlaylist(song._id)">remove from playlist</button>
         <hr>
     </div>
 </div>
@@ -32,11 +32,18 @@ export default {
   },
   computed: {
     songs() {
-      return this.$store.state.songs;
+      return this.$store.state.songs.sort((a,b) => b.vote - a.vote)
     }
   },
   methods: {
     //removeFromPlaylist
+    updateSong(song, i) {
+      let payload = {
+        song,
+        i
+      }
+      this.$store.dispatch('updateSong', payload)
+    },
     playPreview(e) {
       Array.from(document.getElementsByTagName("audio")).forEach(a => a == e.target ? a.play() : a.pause())
     },

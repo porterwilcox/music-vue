@@ -33,6 +33,13 @@ export default new Vuex.Store({
     setSongs(state, songs) {
       state.songs = songs
     },
+    addSong(state, song){
+      state.songs.push(song)
+    },
+    updateSong(state, payload){
+      state.songs[payload.i] = payload.song
+      // state.songs.splice(payload.i, 1, payload.song)
+    },
     setUser(state, user) {
       state.user = user
     }
@@ -77,6 +84,7 @@ export default new Vuex.Store({
         auth.delete('logout')
           .then(res => {
             commit("setUser", {});
+            commit("setSongs", []);
           })
       },
     //SONGS
@@ -93,6 +101,17 @@ export default new Vuex.Store({
         .then(res => {
           commit('addSong', res.data)
         })
+        .catch(e => console.error(e))
+    },
+    updateSong({commit}, payload) {
+      musicDB.put('/songs', payload.song)
+        .then(res => {
+          let toCommit = {
+            song: res.data,
+            i: payload.i
+          }
+          commit('updateSong', toCommit)
+        })        
         .catch(e => console.error(e))
     }
   }

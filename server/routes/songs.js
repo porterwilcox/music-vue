@@ -24,19 +24,24 @@ router.delete('/:id', (req, res, next) => {
         }))
         .catch(next)
 })
-router.put('/:id', (req, res, next) => {
-    Songs.findByIdAndUpdate(req.params.id, req.body)
-        .then(() => res.send({
-            message: "playlist updated"
-        }))
+router.put('/', (req, res, next) => {
+    Songs.findOneAndUpdate({_id: req.body._id}, req.body, {new: true})
+        .then(song => {res.send(song)})
         .catch(next)
 })
-router.put('/modify/:id', (req, res, next) => {
-    Songs.findByIdAndUpdate(req.params.id, req.body)
-        .then(() => res.send({
-            message: "song removed"
-        }))
-        .catch(next)
-})
+// router.put('/:id', (req, res, next) => {
+//     Songs.findByIdAndUpdate(req.params.id, req.body)
+//         .then(() => res.send({
+//             message: "playlist updated"
+//         }))
+//         .catch(next)
+// })
+// router.put('/modify/:id', (req, res, next) => {
+//     Songs.findByIdAndUpdate(req.params.id, req.body)
+//         .then(() => res.send({
+//             message: "song removed"
+//         }))
+//         .catch(next)
+// })
 
 module.exports = router
