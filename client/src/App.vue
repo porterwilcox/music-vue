@@ -6,7 +6,7 @@
 
 <style>
 body {
-  background-image: url("./assets/stereo.jpg");
+  background-image: url("https://github.com/porterwilcox/Music-Is-Fun/blob/master/assets/images/tape.jpg?raw=true");
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -18,7 +18,7 @@ input {
   border: none;
   box-shadow: none;
 }
-button {
+button, .action {
   cursor: pointer;
 }
 span {

@@ -9,129 +9,91 @@ let itunesApi = Axios.create({
 })
 let musicDB = Axios.create({
   baseURL: `//localhost:3000`,
-  timeout: 3000
+  timeout: 3000,
+  withCredentials: true
+})
+let auth = Axios.create({
+  baseURL: `//localhost:3000/auth`,
+  timeout: 3000,
+  withCredentials: true
 })
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    itunesSongs: [],
     songs: [],
-    playlist: {},
     user: {}
   },
   mutations: {
+    setItunesSongs(state, songs) {
+      state.itunesSongs = songs
+    },
     setSongs(state, songs) {
       state.songs = songs
     },
-    setPlaylist(state, playlist) {
-      state.playlist = playlist
-    },
-    register(state, user) {
+    setUser(state, user) {
       state.user = user
-    },
-    login(state, user) {
-      state.user = user[0]
-    },
-    logout(state, logout) {
-      state.user = logout
     }
   },
   actions: {
     //ITUNES
-    search({ dispatch, commit }, artist) {
+    search({ commit }, artist) {
       itunesApi.get(`/${artist}`)
         .then(res => {
-          let musicArr = res.data.results.map(s => new Song(s))
-          commit('setSongs', musicArr)
+          console.log(res)
+          let songs = res.data.results.map(s => new Song(s))
+          commit('setItunesSongs', songs)
         })
-    },
+      },
+      //USERS
+      authenticate({ commit, dispatch }) {
+        auth.get('authenticate')
+          .then(res => {
+            console.log(res)
+            commit('setUser', res.data)
+            dispatch("getSongs")
+          })
+          .catch(err => console.error(err))
+      },
+      register({ commit }, payload) {
+        auth.post('/register', payload)
+          .then(res => {
+            console.log(res)
+            commit('setUser', res.data)
+          })
+      },
+      login({ commit, dispatch }, payload) {
+        auth.post(`/login`, payload)
+          .then(res => {
+            console.log(res)
+            commit('setUser', res.data)
+            dispatch('getSongs')
+          })
+          .catch(() => alert("username or password incorrect"))
+      },
+      logout({ commit }) {
+        auth.delete('logout')
+          .then(res => {
+            commit("setUser", {});
+          })
+      },
     //SONGS
-    getSongs({ dispatch, commit }) {
-      musicDB.get('/songs')
+    getSongs({ commit }, uid) {
+      musicDB.get(`/songs`)
         .then(res => {
+          console.log(res)
           commit('setSongs', res.data)
         })
+        .catch(e => console.error(e))
     },
-    //PLAYLISTS
-    addToPlaylist({ dispatch, commit }, obj) {
-      if (!obj.userId) {
-        return alert("REGISTER OR SIGN IN\nto save songs to a playlist")
-      }
-      if (!obj.playlistId) {
-        return dispatch('newPlaylist', obj)
-      }
-      dispatch('modifyPlaylist', obj)
-    },
-    newPlaylist({ dispatch, commit }, obj) {
-      let playlistArr = []
-      playlistArr.push(obj.song)
-      musicDB.post('/playlists', { songs: playlistArr, userId: obj.userId })
+    addSong({ commit }, song) {
+      musicDB.post(`/songs`, song)
         .then(res => {
-          commit('setPlaylist', res.data)
+          commit('addSong', res.data)
         })
-    },
-    modifyPlaylist({ dispatch, commit, state }, obj) {
-      if (state.playlist.songs.find(s => s.tempId == obj.song.tempId)) {
-        return alert("this song is already in your playlist")
-      }
-      state.playlist.songs.push(obj.song)
-      musicDB.put(`/playlists/${obj.playlistId}`, { songs: state.playlist.songs })
-    },
-    removeFromPlaylist({ dispatch, commit, state }, obj) {
-      state.playlist.songs.splice(obj.index, 1)
-      musicDB.put(`/playlists/modify/${obj.playlistId}`, { songs: state.playlist.songs })
-    },
-    modifyVote({ dispatch, commit, state }, obj) {
-      state.playlist.songs.splice(obj.index, 1)
-      state.playlist.songs.push(obj.song)
-      state.playlist.songs.sort((a, b) => {
-        return b.vote - a.vote
-      })
-      musicDB.put(`/playlists/${obj.playlistId}`, { songs: state.playlist.songs })
-    },
-    playlistTitleChange({dispatch, commit}, obj){
-      musicDB.put(`/playlists/${obj.playlistId}`, {name: obj.newTitle})
-        .then(() =>{
-          musicDB.get(`/playlists/${obj.userId}`)
-            .then(res => {
-              console.log(res.data)
-              commit('setPlaylist', res.data[0])
-            })
-        })
-    },    
-    //USERS
-    userExists({ }, name) {
-      musicDB.get(`/users/exists/now/${name}`)
-        .then(res => {
-          if (res.data.length) {
-            return alert('USERNAME TAKEN:\ncreate a different username please')
-          }
-        })
-    },
-    register({ dispatch, commit }, obj) {
-      musicDB.post('/users', obj)
-        .then(res => {
-          commit('register', res.data)
-        })
-    },
-    login({ dispatch, commit }, obj) {
-      let userId = ''
-      musicDB.get(`/users/${obj.username}/${obj.password}`)
-        .then(res => {
-          if (res.data.length) {
-            userId = res.data[0]._id
-            commit('login', res.data)
-            musicDB.get(`/playlists/${userId}`)
-              .then(res => {
-                if (res.data.length) {
-                  commit('setPlaylist', res.data[0])
-                }
-              })
-            return
-          }
-          return alert("username or password incorrect")
-        })
+        .catch(e => console.error(e))
     }
   }
 })
